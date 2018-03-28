@@ -1,0 +1,34 @@
+{% load extra_tags i18n %}
+<div class='post-update-info post-update-info-user'>
+    <p style="line-height:12px;">
+        {{ node_verb }}
+        <strong>{% diff_date node.added_at %}</strong>
+    </p>
+    {% if not node.author.imgset %}
+        {% gravatar node.author 32 %}
+    {% else %}
+        <img src = "{{ settings.UPFACE_ALIAS }}{{ node.author.img32.path }}" width = '32' height = '32' >
+    {% endif %}
+    <p><a {% if node.author.is_suspended %}class="suspended-user" {% endif %}href="{{ node.author.get_profile_url }}">{{ node.author.decorated_name }}</a><br/>
+    {% get_score_badge node.author %}<br />
+    {% get_accept_rate node.author %}</p>
+</div>
+{% if node.last_edited %}
+    <div class='post-update-info post-update-info-edited'>
+        <p style="line-height:12px;">
+            <a href="{{ node.get_revisions_url }}">
+                {{ node.last_edited.verb }}
+                <strong>{% diff_date node.last_edited.at %}</strong>
+            </a>
+        </p>
+        {% ifnotequal node.author node.last_edited.by %}
+            {% if not node.last_edited.by.imgset %} 
+                {% gravatar node.last_edited.by 32 %}
+            {% else %}
+                <img src = "{{ settings.UPFACE_ALIAS }}{{ node.last_edited.by.img32.path }}" width = '32' height = '32' >
+            {% endif %}
+            <p><a {% if node.last_edited.by.is_suspended %}class="suspended-user" {% endif %}href="{{ node.last_edited.by.get_profile_url }}">{{ node.last_edited.by.decorated_name }}</a><br/>
+            {% get_score_badge node.last_edited.by %}</p>
+        {% endifnotequal %}
+    </div>
+{% endif %}

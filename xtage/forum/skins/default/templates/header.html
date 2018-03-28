@@ -1,0 +1,160 @@
+<!-- template header.html -->
+{% load extra_tags ui_registry i18n extra_filters %}
+
+    <nav class="navbar navbar-inverse navbar-fixed-top" orle="navigation">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mnavbar" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+		  <a href="{% url "index" %}" class='navbar-brand'>
+		  	<img src="{{ settings.APP_LOGO }}" title="{% trans "back to home page" %}" alt="{{settings.APP_TITLE}} logo" class='logo'/>
+		  </a>
+        </div>
+    
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="mnavbar">
+          <ul class="nav navbar-nav">
+             {% loopregistry page_top_tabs %}{% spaceless %}
+                 <li>
+                     <a id="nav_{{ tab_name }}" href="{{ tab_url }}" {% ifequal tab tab_name %} class="on"{% endifequal %} >{{ tab_title }}</a>
+                 </li>
+             {% endspaceless %}{% endloopregistry %}
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+               <li>
+                  {% if space_id %}
+                   <a id="nav_ask" href="{% url "ask" space_id %}" target="_blank" class="special nav-ask">{% trans "Ask a Question" %}</a>
+                   {% else %} 
+                   <a id="nav_ask" href="{% url "ask" 1 %}" target="_blank" class="special nav-ask">{% trans "Ask a Question" %}</a>
+                   {% endif %}
+               </li>
+               <li class="dropdown">
+                <a href="#" class="dropdown-toggle special" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="border-color:#fc4c02; ">Spaces<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                {% with spaces=user|all_spaces %}
+                  {% for space in spaces %}
+                  <li>
+                      <a href="{{ space.get_absolute_url }}">{{space.space_name}}</a>
+                  </li>
+                  {% endfor %}
+                {% endwith %}
+                </ul>
+              </li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li>
+                      <a href="{% url "faq" %}" target="_blank">{% trans "FAQ" %}</a>
+                  </li>
+                  <li>
+                      <a href="{% url "about" %}" target="_blank">{% trans "about" %}</a>
+                  </li>
+                </ul>
+              </li>
+
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{user.username}}<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  {% if not request.user.is_authenticated %}
+                    <li>
+                      <a href="{% url "auth_signin" %}" target="_blank">{% trans "Login" %}</a>
+                  </li>
+                  {% else %}
+                  <li>
+                      <a href="/users/{{user.id}}/{{user.username}}" target="_blank">Profile</a>
+                  </li>
+                  {% endif %}
+<!--                   <li>
+                      <a href="{% url "logout" %}" target="_blank">{% trans "Logout" %}</a>
+                  </li> -->
+                </ul>
+              </li>
+              {% if request.user.is_superuser %}
+              <li>
+                  <a href="{% url "admin_index" %}" target="_blank" >{% trans "Admin" %}</a>
+              </li>
+              {% endif %}
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container -->
+    </nav>
+
+<!--
+	<div class="navbar">
+	    <div class="navbar-container">
+		    <div id="navbar-header">
+		    	<a href="{% url "index" %}" class='navbar-brand'>
+		    		<img src="{{ settings.APP_LOGO }}" title="{% trans "back to home page" %}" alt="{{settings.APP_TITLE}} logo" class='logo'/>
+		    	</a>
+		    </div>
+	        <div class="navbar-list">
+                <ul class="navbar-nav">
+                {% loopregistry page_top_tabs %}{% spaceless %}
+                    <li>
+                        <a id="nav_{{ tab_name }}" href="{{ tab_url }}" {% ifequal tab tab_name %} class="on"{% endifequal %} >{{ tab_title }}</a>
+                    </li>
+                {% endspaceless %}{% endloopregistry %}
+                </ul>
+                <ul class="navbar-nav">
+                    <li>
+                        <a id="nav_ask" href="{% url "ask" 1%}" target="_blank" class="special nav-ask">{% trans "Ask a Question" %}</a>
+                    </li>
+                    <li>
+                        <a href="{% url "faq" %}" target="_blank">{% trans "FAQ" %}</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav navbar-nav-right">
+		            {% loadregistry header_links %}{% endloadregistry %}
+                </ul>
+		    </div>
+		</div>
+    </div>
+-->
+
+  <div class="clear"></div>
+  
+	<div id="searchBar">
+        <h2 class="search-hint">
+                    All you need is a BIG Idea!
+        </h2>
+    <form action="{% url "search" %}" method="get"> 
+        {% csrf_token %}
+        <div>
+            <div class='search-content'>
+                <input type="text" class="searchInput" value="{{ keywords }}" name="q" id="keywords" placeholder="Input here to search..." />
+                <select class="search-options" name="t" >
+                    <option value="question" selected="selected" />{% trans "Questions" %}</label>
+                    <option value="tag" {% if tags_page %}selected='selected' {%endif%}>{% trans "Tags" %}</option>
+                    <option value="user" {% if users_page %}selected='selected' {%endif%}>{% trans "Users" %}</option>
+                    <option value="skill" {% if skills_page %}selected='selected' {%endif%}>{% trans "Talent Profile" %}</option>
+
+                </select>
+            </div>
+
+            <input type="submit" name="Submit" value="{% trans "Search" %}" class="btn btn-default searchBtn" />
+        </div>
+        <!--
+        <div class="options">
+            <input id="type-question" type="radio" value="question" name="t" 
+                checked="checked" /><label for="type-question">{% trans "questions" %}</label>
+            <input id="type-tag" type="radio" value="tag" name="t" /><label for="type-tag">{% trans "tags" %}</label>
+            <input id="type-user" type="radio" value="user" name="t" /><label for="type-user">{% trans "users" %}</label>
+            <input id="type-skill" type="radio" value="skill" name="t" /><label for="type-skill">{% trans "skills" %}</label>
+        </div>
+        -->
+    </form>	
+	</div>
+
+	{% if settings.USE_ANNOUNCEMENT_BAR|or_preview:request %}
+  <div id="announcement">
+      {{ settings.ANNOUNCEMENT_BAR|or_preview:request|static_content:settings.ANNOUNCEMENT_BAR_RENDER_MODE }}
+  </div>
+  {% endif %}
+  <div class='split-line'></div>
+
+<!-- end template header.html -->

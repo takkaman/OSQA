@@ -1,0 +1,10 @@
+markdown==2.4.0
+html5lib==1.0b3
+python-openid
+South
+python-memcached
+django==1.6.0
+django-debug-toolbar
+django-endless-pagination
+pytz
+

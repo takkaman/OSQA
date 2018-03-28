@@ -1,0 +1,13 @@
+{% load i18n %}
+<div class="boxC">
+    <h3 class='subtitle'>{% trans "Spaces" %}</h3>
+    <div class="body">
+        <ul style="list-style-type: none;margin-left: 0px;font-size: 14px;">
+        {% for space in spaces %}
+        <li class='space-item'>
+        <h3><a href="{{ space.get_absolute_url }}">{{space.space_name}}</a></h3>
+        </li>
+        {% endfor %}
+        </ul>
+    </div>
+</div>

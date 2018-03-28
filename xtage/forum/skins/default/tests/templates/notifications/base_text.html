@@ -1,0 +1,12 @@
+{% load extra_filters extra_tags i18n email_tags %}
+
+{% if not exclude_greeting %}
+{% trans "Hello" %} {{ recipient.username }},
+{% endif %}
+
+{% block content %}{% endblock%}
+
+{% trans "Thanks" %},
+{{settings.APP_SHORT_NAME}}
+
+{{ settings.EMAIL_FOOTER_TEXT }}

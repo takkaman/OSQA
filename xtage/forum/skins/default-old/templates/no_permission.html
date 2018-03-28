@@ -1,0 +1,32 @@
+{% extends "base_content.html" %}
+<!-- template no_permission.html -->
+{% load i18n %}
+{% block title %}{% spaceless %}Permission Error{% endspaceless %}{% endblock %}
+{% block forejs %}
+        <script type="text/javascript">
+        $().ready(function(){
+            $("#linkPrevious").bind("click", back=function(){history.go(-1);})            
+        });
+         
+        </script>
+{% endblock %}
+{% block content %}
+<div id="main-bar" class="">
+    <h3>
+        Permission Error
+    </h3>
+</div>
+<div id="main-body" class="headNormal">
+    <div style="padding:5px 0px 10px 0;line-height:25px">
+        <h3>{% trans "sorry, you don't have permission to perform this operation." %}</h3>
+        <br/>
+        <ul>
+            <li><a href="#" id="linkPrevious">{% trans "back to previous page" %}</a></li>
+            <li><a href="{% url "questions" %}">{% trans "see latest questions" %}</a></li>
+            <li><a href="{% url "tags" %}">{% trans "see tags" %}</a></li>
+        </ul>
+    </div>
+
+</div>
+{% endblock %}
+<!-- end template base_content.html -->

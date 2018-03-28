@@ -1,0 +1,294 @@
+{% extends "base.html" %}
+<!-- question_edit.html -->
+{% load i18n %}
+{% load extra_tags %}
+{% block title %}{% spaceless %}{% trans "Edit question" %}{% endspaceless %}{% endblock %}
+{% block forejs %}
+        <script type='text/javascript' src='{% media  "/media/js/wmd/showdown.js" %}'></script>
+        <script type='text/javascript' src='{% media  "/media/js/wmd/wmd.js" %}'></script>
+        <script type='text/javascript' src='{% media  "/media/js/html_sanitizer.js" %}'></script>
+        <link rel="stylesheet" type="text/css" href="{% media  "/media/js/wmd/wmd.css" %}" />
+        <script type="text/javascript">
+        //todo move javascript out
+        $().ready(function(){
+            $("#nav_questions").attr('className',"on");
+            $('#editor').TextAreaResizer();
+
+
+            //toggle preview of editor
+            var display = true;
+            var txt = "[{% trans "hide preview" %}]";
+            $('#pre-collapse').text(txt);
+            $('#pre-collapse').bind('click', function(){
+                txt = display ? "[{% trans "show preview" %}]" : "[{% trans "hide preview" %}]";
+                display = !display;
+                $('#previewer').toggle();
+                $('#pre-collapse').text(txt);
+            });
+
+            $("#id_usersearch").autocomplete({
+                source: function( request, response ) {
+                    $.ajax({
+                        url: '{% url "matching_users" %}',
+                        dataType: "json",
+                        data: {
+                            q: request.term
+                        },
+                        success: function( data ) {
+                            response( data );
+                        }
+                    });
+                },
+                minChars: 1,
+                matchContains: true,
+                max: 10,
+                multiple: true,
+                multipleSeparator: " ",
+                highlightItem: true,
+                scroll: true,
+                scrollHeight: 300,
+
+                select: function (event, ui) {
+
+                    add_to_invites(ui.item.value, ui.item.img, ui.item.profile_url, ui.item.decorated_name,
+                                   ui.item.badge);
+                    ui.item.value = '';
+                },
+
+            });
+
+            $("#id_invites").hide();
+
+
+            //Tags autocomplete action
+            $("#id_tags").autocomplete_("{% url "matching_tags" %}", {
+                matchContains: true,
+                max: 20,
+                multiple: true,
+                multipleSeparator: " ",
+                highlightItem: true,
+                scroll: true,
+                scrollHeight: 300,
+                /*formatItem: function(row, i, max) {
+                    return row.n + " ("+ row.c +")";
+                },
+                formatResult: function(row, i, max){
+                    return row.n;
+                }*/
+                formatItem: function(row, i, max, value) {
+                    return row[1] + " (" + row[2] + ")";
+                },
+
+                formatResult: function(row, i, max, value){
+                    return row[1];
+                }
+
+            });
+
+            /* show invites */
+            $('#id_invites').val().split(' ').map(function (username) {
+                $.ajax({
+                    url: '{% url "matching_username" %}',
+                    dataType: "json",
+                    data: {
+                        q: username
+                    },
+                    success: function( data ) {
+                        console.log(data);
+                        add_to_invites_ui(data.value, data.img, data.profile_url, data.decorated_name,
+                                          data.badge);
+                    }
+                });
+            });
+
+            $('#id_revision').unbind().change(function(){
+                $("#select_revision").click();
+            });
+
+            init = $("textarea#editor")[0].value;
+
+            title = $("input#id_title")[0].value;
+            body = $("textarea#editor")[0].value;
+            tag = $("input#id_tags")[0].value;
+         });
+
+         function add_to_invites(username, img, profile_url, decorated_name, badge) {
+
+             /* already exist */
+             var exist = $('#id_invites').val()
+                                         .split(' ')
+                                         .filter(function (name) { name == username })
+                                         .length > 0;
+             if ( exist ) { return }
+
+             console.log('new invites');
+
+             add_to_invites_ui(username, img, profile_url, decorated_name, badge);
+             $('#id_invites').val($('#id_invites').val() + ' ' + username);
+         }
+
+         function add_to_invites_ui(username, img, profile_url, decorated_name, badge) {
+             var user = $('<div class="user"><ul><li class="thumb" name="'+ username  +'">' + img + '</li><li><a target="_blank" href="' + profile_url + '">'+ decorated_name + '</a></li><li>' + badge + '</li></ul></div>');
+
+             user.children('ul').children('li').children('img').click(function (){
+                 var v = $(this).parent().attr('name');
+                 var new_v = $('#id_invites').val().split(' ')
+                                             .filter(function (name) {
+                                                 return name != v
+                                             }).join(' ');
+                 $('#id_invites').val(new_v);
+                 user.remove();
+             });
+             $('#invited_users').append(user);
+         }
+
+
+        function submitClicked(e, f) {
+            if(!(browserTester('chrome') || browserTester('safari'))) {
+                $("input.submit")[0].disabled=true;
+                $("input.submit")[1].disabled=true;
+            }
+            window.removeEventListener('beforeunload', beforeUnload, true);
+            if (f) {
+                f.submit();
+            }
+        }
+
+        function beforeUnload(e) {
+            if($("input#id_title")[0].value != title || $("textarea#editor")[0].value != body || $("input#id_tags")[0].value != tag) {
+                 return yourWorkWillBeLost(e);
+            }
+        }
+         window.addEventListener('beforeunload', beforeUnload, true);
+
+
+        var init = "";
+        var title = "";
+        var body = "";
+        var tag = "";
+        </script>
+
+        <!--syl added start-->
+        <script type='text/javascript' src='{% media  "/media/js/tinymce2/tinymce.min.js" %}'></script>
+        <script type='text/javascript' src='{% media  "/media/js/tinymce2/jquery.iframe-post-form.js" %}'></script>
+        <script type="text/javascript">
+        tinymce.init({
+            selector: "textarea",
+            toolbar: "undo redo bold italic left right strikethrough link unlink numlist bullist blockquote fullscreen preview image imageupload ",
+            width: 740,
+            height: 400,
+            plugins: [
+                "advlist autolink lists link  charmap print preview anchor",
+                "searchreplace visualblocks code fullscreen",
+                "insertdatetime media table contextmenu paste imageupload",
+            ],
+            relative_urls: false,
+            imageupload_url: '/upload/',
+        });
+        </script>
+        <!--syl added end-->
+
+{% endblock %}
+
+{% block content %}
+<div id="main-bar" class="headNormal">
+    {% block edittype %}{% trans "Edit question" %}{% endblock %} [<a href="{{ question.get_absolute_url }}">{% trans "back" %}</a>]
+</div>
+<div id="main-body" class="ask-body">
+    <div id="askform">
+        <form id="fmedit" action="" method="post">
+            {% csrf_token %}
+            <label for="id_revision" ><strong>{% trans "revision" %}:</strong></label> <br/>
+            {% if revision_form.revision.errors %}{{ revision_form.revision.errors.as_ul }}{% endif %}
+            <div style="vertical-align:middle">
+            {{ revision_form.revision }} <input type="submit" style="display:none" id="select_revision" name="select_revision"
+                                            value="{% trans "select revision"%}">
+            </div>
+            <div class="form-item">
+                <label for="id_title" ><strong>{{ form.title.label_tag }}:</strong></label> <span class="form-error"></span><br/>
+                {{ form.title }} {{ form.title.errors }}
+                <div class="title-desc">
+                    {{ form.title.help_text }}
+                </div>
+            </div>
+            <div class="form-item">
+                <!--<div id="wmd-button-bar" class="wmd-panel"></div>-->
+                {{ form.text }}
+                <span class="form-error"></span>
+                <!--<div class="preview-toggle">
+                    <table width="100%">
+                        <tr>
+                            <td>
+                                <span id="pre-collapse" title="{% trans "Toggle the real time Markdown editor preview" %}">{% trans "toggle preview" %}</span>
+                            </td>
+                            <td style="text-align: right;" id="editor-metrics"></td>
+                            {% if settings.WIKI_ON %}
+                            <td style="text-align:right;">
+                                {{ form.wiki }} <span style="color:#000;cursor:help" title="{{form.wiki.help_text}}">{{ form.wiki.label_tag }} </span>
+                            </td>
+                            {% endif %}
+                        </tr>
+
+                    </table>
+                </div>
+                <div id="previewer" class="wmd-preview"></div>-->
+            </div>
+            <div class="form-item">
+                <strong>{{ form.tags.label_tag }}:</strong> <span class="form-error"></span><br/>
+                {{ form.tags }}  {{ form.tags.errors }}
+                <div class="title-desc">
+                    {{ form.tags.help_text }}
+                </div>
+            </div>
+            <strong>{{ form.summary.label_tag }}</strong> <br/>
+            {{ form.summary }}  {{ form.summary.errors }}
+            <div class="title-desc">
+                {{ form.summary.help_text }}
+            </div>
+
+            <div class="invite-item">
+                <label>{% trans "Invite People:" %}</label> <span class="form-error"></span><br/>
+                {{ form.usersearch }}
+                <div class="invited_users" id="invited_users">
+                </div>
+                {{ form.invites }}
+
+                <!-- {{ form.invites }}  {{ form.invites.errors }} -->
+            </div>
+
+            <div class="space-list">
+                <p>{% trans "choose a space to post" %}</p>
+                <p>{{ form.space}} </p>
+            </div>
+
+            <div class="public-item">
+                <p>{% trans "make your post" %}</p>
+                <p>{{ form.public}} </p>
+            </div>
+
+            {% if form.recaptcha %}
+            <div class="question-captcha" style="float: left">
+                {{ form.recaptcha.errors }}
+                {{ form.recaptcha }}
+            </div>
+            <div class="clear"></div>
+            {% endif %}
+
+            <div class="error" ></div>
+            <br/>
+            <br/>
+            <br/>
+            <input type="button" value="{% trans "Save edit" %}" class="submit" onclick="submitClicked(event, this.form)" />
+            <input type="button" value="{% trans "Cancel" %}" class="submit" onclick="submitClicked(event, null); history.back(-1);" />
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block sidebar %}
+{% include "question_edit_tips.html" %}
+{% endblock %}
+
+{% block endjs %}
+{% endblock %}
+<!-- end question_edit.html -->

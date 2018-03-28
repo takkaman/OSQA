@@ -1,0 +1,13 @@
+AuthName Synopsys 
+AuthUserFile /remote/wwwin/LDAP_DB/user-passwd
+AuthGroupFile  /remote/pv/web/permission/ACCESS_GROUP
+AuthType Basic
+
+<Limit GET POST>
+#-- require group engineering
+require valid-user
+satisfy all
+order deny,allow
+deny from all
+allow from all
+</Limit>

@@ -1,0 +1,11 @@
+{% if show %}
+{% if wrap %}<div id="{{ blockid }}" class="boxC">
+    <div class="boxHeader">
+        <h3>Top Activity</h3>
+    </div>
+
+    <div class="body">{% endif %}
+        {{ content }}
+     {% if wrap %}</div>
+</div>{% endif %}
+{% endif %}

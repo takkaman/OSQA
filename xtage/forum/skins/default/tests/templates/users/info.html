@@ -1,0 +1,252 @@
+<!-- user_info.html -->
+{% load extra_tags %}
+{% load extra_filters %}
+{% load humanize %}
+{% load smart_if %}
+{% load i18n %}
+{% load user_tags %}
+
+<script type='text/javascript' src='{% media  "/media/js/jquery-1.7.1.js.js" %}'></script>
+<script type='text/javascript' src='{% media  "/media/js/jquery-ui-1.10.4.min.js" %}'></script>
+
+<script type='text/javascript' src='{% media  "/media/js/osqa.main.js" %}'></script>
+<script type='text/javascript' src='{% media  "/media/js/jquery-ui-1.8.1.min.js" %}'></script>
+
+<script>
+$(document).ready(function(){
+$('#skill').click(function(){
+$.getJSON('/ajax_skill_search/',function(ret){
+var aResult = new Array();
+aResult = ret;
+$("#skill").autocomplete({ source: aResult });
+})
+})
+});
+</script>
+
+<style>
+.tabsA_input {
+    background: none repeat scroll 0 0 #EEEEEE;
+    border-bottom: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+    border-left: 0px solid #CCCCCC;
+    border-top: 0px solid #CCCCCC;
+    font-family: sans-serif;
+    font-size: 12px;
+    color: #888A85;
+    font-weight: bold;
+    height: 24px;
+    text-decoration: none;
+}
+
+.tabsA_input:hover {
+    background: none repeat scroll #356FCB;
+    color: #FFFFFF;
+}
+
+</style>
+<script>
+function show_delete(tmp) {
+    var a = $(tmp).find("input[type=image]");
+    $(tmp).find("input[type=image]").css("display","block");
+    //alert(a);
+}
+
+function hide_delete(tmp) {
+    var a = $(tmp).find("input[type=image]");
+    $(tmp).find("input[type=image]").css("display","none");
+}
+</script>
+
+
+<div id="subheader" class="headUser{% if view_user.is_suspended %} suspended-user{% endif %}">
+    {{view_user.decorated_name}}
+    {% if view_user.about %}
+    <p>{{view_user.about|static_content:"markdown-safe"}}</p>
+    {% endif %}
+</div>
+<table class="user-info-table">
+    <tr>
+        <td width="180" style="vertical-align:middle;text-align:center;">
+            <table width="100%">
+                <tr>
+                    <td>
+                        {% if not view_user.imgset %}
+                             {% gravatar view_user 128 %}
+                         {% else %}
+                             <a href = "{{ settings.UPFACE_ALIAS }}{{view_user.img.path }}" target = "_blank">
+                                 <img src = " {{ settings.UPFACE_ALIAS }}{{ view_user.img128.path }}" width = "128" height = "128" >
+                         {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center">
+                        {% if not view_user.is_suspended %}
+                            <div class="scoreNumber" id="user-reputation">{{view_user.reputation|intcomma}}</div>
+                            <p><b style="color:#777;">{% trans "reputation" %}</b></p>
+                        {% else %}
+                            <div class="scoreNumber">{% trans "Suspended" %}</div>
+                            <p>{{ view_user.suspension.extra.publicmsg }}</p>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </td>
+        <td width="360" style="vertical-align: top;">
+        {% if can_view_private %}{% user_menu request.user view_user %}{% endif %}
+            <table class="user-details">
+                <tr>
+                    <th colspan="2" align="left">
+                        <h3>
+                            {% if view_user.is_superuser %}
+                                {% trans "Administrator" %}
+                            {% else %}
+                                {% if view_user.is_staff %}
+                                    {% trans "Moderator" %}
+                                {% else %}
+                                    {% trans "Registered user" %}
+                                {% endif %}
+                            {% endif %}
+                        </h3>
+                    </th>
+                </tr>
+                {% if view_user.real_name %}
+                <tr>
+                    <td>{% trans "real name" %}</td>
+                    <td><b>{{view_user.real_name}}</b></td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <td>{% trans "member since" %}</td>
+                    <td><strong>{% diff_date view_user.date_joined %}</strong></td>
+                </tr>
+                {% if view_user.last_seen %}
+                <tr>
+                    <td>{% trans "last seen" %}</td>
+                    <td><strong title="{{ view_user.last_activity }}">{% diff_date view_user.last_activity %}</strong></td>
+                </tr>
+                {% endif %}
+                {% if view_user.website %}
+                <tr>
+                    <td>{% trans "user's website" %}</td>
+                    <td><a rel="nofollow" target="_blank" href="{{view_user.website}}">{{view_user.website}}</a></td>
+                </tr>
+                {% endif  %}
+                {% if view_user.location %}
+                <tr>
+                    <td>{% trans "location" %}</td>
+                    <td>{{view_user.location}}</td>
+                </tr>
+                {% endif %}
+                {% if view_user.date_of_birth%}
+                <tr>
+					<!--todo  - redo this with blocktrans -->
+                    {% if view_user.date_of_birth.year != 1900%}
+                    <td>{% trans "age" %}</td>
+                    <td>{% get_age view_user.date_of_birth %} {% trans "age unit" %}</td>
+                    {% endif %}
+                </tr>
+                {% endif %}
+                {% if can_view_private %}
+                <tr>
+                    <td>{% trans "email" %}</td>
+                    <td>
+                        <a href="mailto:{{ view_user.email }}">{{ view_user.email }}</a>
+                        {% if not view_user.email_isvalid %}
+                            ({% trans "not validated" %})
+                            {% ifequal request.user view_user  %}
+                                </td></tr><tr><td></td><td><a href="{% url "send_validation_email" %}">{% trans "Send me a validation link." %}</a>
+                            {% endifequal %}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endif %}
+
+                <tr>
+                    <td colspan="2" style="text-align:right">
+                        <a href="{% url "user_report" user.pk %}" class="ajax-command withprompt">
+                        Report user
+                        </a>
+                    </td>
+                </tr>
+				<!--
+                {% if votes_today_left %}
+                <tr>
+                    <td>{% trans "todays unused votes" %}</td>
+                    <td><strong class="darkred">{{ votes_today_left }}</strong> {% trans "votes left" %}</td>
+                </tr>
+                {% endif %}
+				-->
+            </table>
+        </td>
+        <td width="380">
+            {% if not view_user.is_suspended %}
+            <div class="user-about" style="background-color: white">
+            <div class="user" style="width:300px;padding:0px">
+                {% if view_page %}
+				<p style="margin-bottom:8px;float:left"><b>Top Skill</b></p>
+				<span style="float:right;display:block;">
+				{% ifequal request.user view_user %}		
+				<form action="{% url "add_skill" user.id %}" method= "post">
+				{% csrf_token %}
+				<input type="text" id="skill" name="skill"/>
+				<input type="submit"  value="{% trans "Add" %}" class="tabsA_input"/>
+                </form>
+				{% endifequal %}
+				</span>
+				<ul>
+                    {% for user_skill in user_skills.paginator.page %}
+                    <li class="thumb" style="width:330px;margin-bottom:2.5px;">
+                    <span class="top" onmouseover="show_delete(this);" onmouseleave="hide_delete(this);"><span class="answer-votes" style="background-color:#0073b2;color:#fff;margin-right:0px;font-size:100%">{{user_skill.adores.all | length}}</span><span class="answer-votes" style="background-color:#eeeeee;color:#888A85;margin-right:0px;width:auto;">{{user_skill.skill.skillname}}</span>
+					{% ifequal request.user view_user %}
+					<span style="float:left;">
+					<form action="{% url "remove_skill" user.id %}" method= "post">
+						{% csrf_token %}
+						<input type="hidden" value={{user_skill.id}} name="skill"/>
+                        <input type='hidden' value={{view_user.id}} name="view_user_id" />
+					    <input class="imgbtn" name="imgbtn" type="image" src="{% media "/media/images/delete.png" %}" width="12" height="12" border="0" style="margin-top:6px;display:none;"/>
+					</form>
+					</span>
+                    </span>
+					{% else %}
+                        {% if request.user.is_superuser %}
+                        <span style="float:left;">
+                        <form action="{% url "remove_skill" user.id %}" method= "post">
+                            {% csrf_token %}
+                            <input type="hidden" value={{user_skill.id}} name="skill"/>
+                            <input type='hidden' value={{view_user.id}} name="view_user_id" />
+                            <input class="imgbtn" name="imgbtn" type="image" src="{% media "/media/images/delete.png" %}" width="12" height="12" border="0" style="margin-top:6px;display:none;"/>
+                        </form>
+                        </span>
+                        </span>
+
+                        {% endif %}
+                            <div class="vote-buttons">
+                            {% skill_adore user_skill view_user request.user %}
+                            
+
+                            </div>
+                    {% endifequal %}
+                    <div style="float:right;height:24px"> 
+                    {% for adorer in user_skill.adores.all|slice:":6" %}
+                    <a href="{{ adorer.get_profile_url }} " title={{adorer.username}} >
+                    {% if not adorer.imgset %}
+                        {% gravatar adorer 24 %}</a>
+                    {% else %}
+                         <img src = " {{ settings.UPFACE_ALIAS }}{{ adorer.img24.path }}" width = "24" height = "24" >
+                    {% endif %}
+                    {% endfor %}
+                    </div>
+                    {% endfor %}
+                    </li>
+                </ul>
+                <div class="pager" style="height:25px;margin:0px;padding:0px;">{{ user_skills.paginator.page_numbers }}</div>
+                {% endif %}
+            </div>
+            </div>
+            {% endif %}
+            {{errors}}
+        </td>
+    </tr>
+</table>
+<!-- end user_info.html -->

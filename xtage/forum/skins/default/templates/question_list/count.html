@@ -1,0 +1,25 @@
+{% spaceless %}
+{% load i18n humanize extra_tags %}
+{% declare %}
+    answer_count = questions.children_count('answer')
+{% enddeclare %}
+
+<div class="boxC">
+    <div class="boxHeader">
+        <h3>{% trans "Activity" %}</h3>
+    </div>
+
+<div class="questions-count">
+    <table><tr>
+            <td><span class='grey'>{{ list_description }}&nbsp;&nbsp;&nbsp;</span></td>
+        <td><span class='orange'> {{ questions.paginator.count }} </span></td></tr>
+    {% if answer_count %}
+    <tr>
+        <td><span class='grey'>{% trans "answers" %}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td>
+        <td><span class='orange'> {{ answer_count  }} </span></td>
+        </tr>
+
+    {% endif %}
+    </table>
+</div>
+{% endspaceless %}

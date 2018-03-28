@@ -1,0 +1,245 @@
+
+.short-summary .votes, .short-summary .views, .short-summary .status {
+    color: #999999;
+    border: 0px;
+}
+
+.short-summary .counts {
+    float: right;
+    margin-right: 0px;
+}
+
+.short-summary .question-summary-wrapper {
+    float: left;
+}
+
+.short-summary .userinfo {
+    color: rgb(119, 119, 119);
+    float: left;
+	display: none;
+}
+
+.userinfo a, a.userinfo {
+    font-weight: bold;
+	color: dimgrey;
+}
+
+.score, .accept_rate {
+    display: none;
+}
+
+.short-summary .answered {
+    background: none repeat scroll 0 0 ;
+	color: rgb(135, 176, 135);
+}
+
+.short-summary .answered-accepted, .answer-votes.answered-accepted {
+    background-color: rgb(223, 240, 216);
+    color: rgb(70, 136, 71);
+}
+
+.short-summary .counts {
+	color: rgb(153, 153, 153);
+}
+
+.short-summary h2 a {
+    color: #4183c4;
+}
+
+.short-summary .question-summary-wrapper {
+    width: 500px;
+}
+
+.short-summary .tags {
+    float: left;
+	margin-right: 3px;
+	color: rgb(153, 153, 153);
+	line-height: 100%;
+    color: #777;
+    font-weight: 600;
+}
+
+.short-summary .tags a, span.tag {
+    font-weight: bold;
+	border: 0px;
+	background-color: transparent;
+	padding: 1px 2px;
+}
+
+.short-summary .tags a:hover {
+    font-weight: bold;
+	border: 0px;
+	background-color: transparent;
+	padding: 1px 2px;
+    color: #777;
+    text-decoration: underline;
+}
+
+.tabBar {
+    width: 100%;
+    float: left;
+    border-bottom: solid 1px #ccc;
+}
+
+.headQuestions {
+    /*
+    display: none;
+    */
+    margin: 0 4px 0;
+    font-size: 22px;
+    font-weight: 500;
+    color: #555555;
+}
+
+
+.tabsA {
+    background-color: #FFFFFF;
+    display: block;
+    float: right;
+    font-weight: bold;
+    position: relative;
+	font-size: 14px;
+	color: rgb(112, 115, 114);
+    height: 100%;
+    /*
+    height: 200%;
+    */
+}
+
+.tabsA a {
+    /*
+    line-height: 20px;
+	padding: 10px;
+    padding: 5px 12px 5px 12px;
+    */
+	border: 0px;
+	color: rgb(252, 76, 2);
+	background-color: rgb(246, 245, 246);
+    margin: 0px 2px;
+}
+
+.tabsA a:hover {
+	background-color: rgb(229, 225, 230);
+	color: rgb(252, 76, 2);
+}
+
+.tabsA a.on {
+	color: white;
+    background-color: rgb(252, 76, 2);
+}
+
+/*
+.tabsA {
+    background-color: #FFFFFF;
+    display: block;
+    float: left;
+    font-weight: bold;
+    height: 200%;
+    position: relative;
+	font-size: 14px;
+	color: rgb(112, 115, 114);
+}
+
+.tabsA a {
+    line-height: 20px;
+	border: 0px;
+	padding: 10px;
+	color: rgb(252, 76, 2);
+	background-color: rgb(246, 245, 246);
+}
+
+.tabsA a:hover {
+	background-color: rgb(229, 225, 230);
+	color: rgb(252, 76, 2);
+}
+
+.tabsA a.on {
+	color: white;
+    background-color: rgb(252, 76, 2);
+}
+*/
+
+.boxC .questions-count {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.boxC .tags a {
+    padding: 4px;
+}
+
+.boxC .tags a:hover {
+	background-color: rgb(229, 225, 230);
+	/* color: rgb(252, 76, 2); */
+}
+
+/* added */
+.btn {
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: normal;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    padding: 7px 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    border-radius: 0;
+    -o-user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    color: #ffffff;
+    background-color: #555555;
+    border-color: #555555;
+    transition: background-color 0.1s;
+}
+
+.btn-default {
+    color: #ffffff;
+    background-color: #555555;
+    border-color: #555555;
+}
+
+.boxC .boxHeader {
+    width: 100%;
+    float: left;
+    border-bottom: solid 1px #ccc;
+    margin-bottom: 10px;
+}
+
+.boxC .boxHeader h3 {
+    float: left;
+    margin: 5px 0;
+    font-size: 22px;
+    font-weight: 500;
+    color: #555555;
+}
+
+.boxC .orange {
+    color: #fc4c02;
+}
+
+.boxC .grey {
+    color: #848484;
+}
+
+.user-info {
+	color: rgb(153, 153, 153);
+	line-height: 100%;
+	margin: 0px;
+	font-size: 12px;
+}
+
+.user-info a {
+    font-weight: bold;
+    color: rgb(153, 153, 153);
+}
+
+
+

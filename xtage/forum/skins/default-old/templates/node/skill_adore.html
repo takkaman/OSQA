@@ -1,0 +1,5 @@
+{% load i18n %}
+
+<a id="favorite-mark" title="{% trans "adore/unadore this skill (click again to cancel)" %}"
+    class="ajax-command favorite-mark {% if favorited %} on{% endif %}"
+    href="{% url "adore_skill" id=user_skill.id %}"> </a>

@@ -1,0 +1,34 @@
+{% load i18n extra_tags email_tags %}
+
+{% declare %}
+    prefix = html.mark_safe(smart_str(settings.EMAIL_SUBJECT_PREFIX))
+    app_name = smart_str(settings.APP_SHORT_NAME)
+    safe_app_name = html.mark_safe(smart_str(settings.APP_SHORT_NAME))
+    question_title = html.mark_safe(smart_str(comment.absolute_parent.title))
+    author_link = html.objlink(comment.author, style=settings.EMAIL_ANCHOR_STYLE)
+    comment_link = html.objlink(comment, style=settings.EMAIL_ANCHOR_STYLE)
+    question_link = html.objlink(comment.absolute_parent, style=settings.EMAIL_ANCHOR_STYLE) 
+{% enddeclare %}
+
+{% email %}
+    {% subject %}{% blocktrans %}{{ prefix }} New reply: {{ question_title }} on {{ safe_app_name }}{% endblocktrans %}{% endsubject %}
+
+    {% htmlcontent notifications/base.html %}
+        <p style="{{ p_style }}">
+            {% blocktrans %}
+            {{ author_link }} has just replyed you in question {{question_link}} on {{ app_name }}.
+            Here's what it says:
+            {% endblocktrans %}
+        </p>
+
+        <blockquote>
+            {{ comment_link }}
+        </blockquote>
+
+        <p style="{{ p_style }}">{% trans "Don't forget to take a look." %}</p>        
+    {% endhtmlcontent %}
+
+    {% textcontent notifications/base_text.html %}
+    {% endtextcontent %}
+
+{% endemail %}

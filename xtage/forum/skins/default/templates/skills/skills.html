@@ -1,0 +1,88 @@
+{% extends "base_content.html" %}
+<!-- skills.html -->
+{% load extra_tags %}
+{% load extra_filters %}
+{% load humanize %}
+{% load i18n %}
+{% block title %}{% spaceless %}{% trans "Talent Profile" %}{% endspaceless %}{% endblock %}
+{% block forejs %}
+       <script type="text/javascript">
+       /*<![CDATA[*/
+        $().ready(function(){
+            //$("#ipSearchTag").focus();
+
+            var orderby = "{{ tab_id }}";
+            if(orderby != "used" && orderby != "name")
+                orderby = "used";
+            $("#sort_" + orderby).attr('className',"on");
+            $("#type-skill").attr('checked',true);
+
+            Hilite.exact = false;
+            Hilite.elementid = "searchtags";
+            Hilite.debug_referrer = location.href;
+        });
+        /*]]>*/
+        </script>
+{% endblock %}
+{% block content %}
+<!-- Tabs -->
+<div class="tabBar">
+    <div class="headQuestions">{% trans "Skills" %} ({{skills|length}})</div>
+    {{ skills.paginator.sort_tabs }}
+</div>
+<div id="searchtags">
+<p>
+{% if sskill %}
+    {% trans "All skills matching query" %} '<span class="darkred"><strong>{{ sskill }}</strong></span>':
+{% endif %}
+{% if not skills.paginator.count %}
+    <span>{% trans "Nothing found" %}</span>
+{% endif %}
+</p>
+{% if skills.paginator.count %}
+<div id="main-body" style="width:120%">
+{% for skill in skills.paginator.page %}
+    <ul class="tags" >
+        <li>
+        <a class="skill-link-{{ skill.skillname }}" href="#" rel="skill">
+            {{ skill.skillname }}
+        </a>&nbsp;
+
+        <span class="tag-number">&#215; {{skill.owner.all | length}}</span>
+        </li>
+    </ul>
+    <div class="userList" style="padding:0px 0px 0px 10px">
+    {% with dict1=skill_owners|getval:skill.skillname %}
+        {% for owner in dict1.user_order %}
+        <div class="user" >
+            <div style="width:32px;height:32px;float:left;"><span class="answer-votes" style="background-color:#0073b2;color:#fff;font-size:100%;" title="{{dict1|getval:owner}} users adored his/her skill">{{dict1|getval:owner}}</span> </div>
+            <div style="width:150px;float:left;">
+                <ul>               
+                    <li class="thumb"><a href="{{ owner.get_profile_url }} ">
+                        {% if not owner.imgset %}    
+                            {% gravatar owner 48 %}
+                        {% else %}
+                            <img src = "{{ settings.UPFACE_ALIAS }}{{ owner.img32.path }}" width = '48' height = '48' >
+                        {% endif %}
+                    </a></li>
+                    <li><a {% if owner.is_suspended %}class="suspended-user" {% endif %}href="{{ owner.get_profile_url }}">{{ owner.decorated_name }}</a></li>
+                    <li>{% get_score_badge owner %}</li>
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
+    {% endwith %}
+    </div>
+    <br/>   
+{% endfor %}
+</div>
+{% endif %}
+</div>
+
+{% endblock %}
+{% block tail %}
+<div class="pager">
+    {{ skills.paginator.page_numbers }}
+</div>              
+{% endblock %} 
+<!-- end skills.html -->

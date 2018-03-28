@@ -1,0 +1,11 @@
+#preview{
+  width:128px;
+  height:128px;
+  border:0px solid #000;
+  overflow:hidden;
+}
+#imghead {
+  filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=image);
+}
+
+

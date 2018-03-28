@@ -1,0 +1,9 @@
+@import "jquery.autocomplete.css";
+
+.skill-adore {
+    background: url('../images/vote-favorite-off_1.png') no-repeat scroll center center transparent;
+}
+
+.skill-adore.on {
+    background: url('../images/vote-favorite-on_1.png') no-repeat scroll center center transparent;
+}

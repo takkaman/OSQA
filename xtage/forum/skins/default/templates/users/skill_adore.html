@@ -1,0 +1,19 @@
+{% load i18n %}
+
+<style>
+.skill-adore {
+    display: block;
+    height: 24px;
+    position: relative;
+    width: 24px;
+    background: url('../../m/default/media/images/vote-favorite-off_1.png') no-repeat scroll center center transparent;
+}
+
+.skill-adore.on, a.skill-adore:hover {
+    background: url('../../m/default/media/images/vote-favorite-on_1.png') no-repeat scroll center center transparent;
+}
+</style>
+
+<a id="skill-adore-{{user_skill.id}}" title="{% trans "adore/unadore this skill (click again to cancel)" %}"
+    class="ajax-command skill-adore {% if favorited %} on{% endif %}"
+    href="{% url "adore_skill" id=user_skill.id %}" rel="nofollow"> </a>
